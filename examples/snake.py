@@ -78,13 +78,13 @@ def draw():
 
 def on_key(key):
     last = g.dir_queue[-1] if g.dir_queue else g.dir
-    if key == 'left' and last != RIGHT:
+    if key == 'left' and last not in (LEFT, RIGHT):
         g.dir_queue.append(LEFT)
-    elif key == 'right' and last != LEFT:
+    elif key == 'right' and last not in (RIGHT, LEFT):
         g.dir_queue.append(RIGHT)
-    elif key == 'up' and last != DOWN:
+    elif key == 'up' and last not in (UP, DOWN):
         g.dir_queue.append(UP)
-    elif key == 'down' and last != UP:
+    elif key == 'down' and last not in (DOWN, UP):
         g.dir_queue.append(DOWN)
     if key == ' ' and g.status == 'dead':
         init()
