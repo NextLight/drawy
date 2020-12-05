@@ -2,12 +2,13 @@ from __future__ import annotations
 import skia
 import math
 import sys
+from .drawer import Drawer
 
 FRAME: int = 0
 MOUSE_POSITION: Point = None
-WIDTH: int = 0
-HEIGHT: int = 0
-REFRESH_RATE: int = 0
+WIDTH: int = 1
+HEIGHT: int = 1
+REFRESH_RATE: int = 1
 
 class Global: pass
 g = Global()
@@ -20,6 +21,7 @@ class Align:
 	BOTTOM = 'bottom'
 
 _canvas: skia.Canvas = None
+_drawer: Drawer = None
 
 def draw_rectangle(left_top: tuple[float, float], width: float, height: float, color, *, fill=True, border_thickness=8):
 	if fill:
@@ -110,6 +112,12 @@ def draw_image(file_name: str, left_top: tuple[float, float], width: float, heig
 		cache[file_name] = img
 	x, y = left_top
 	_canvas.drawImageRect(img, skia.Rect.MakeXYWH(x, y, width, height))
+
+def is_key_pressed(key):
+	return _drawer.is_key_pressed(key)
+
+def is_mouse_pressed(button='left'):
+	return _drawer.is_mouse_pressed(button)
 
 class Color:
 	Transparent = skia.ColorTRANSPARENT
@@ -296,26 +304,24 @@ class Point:
 		return f'Point(x={self.x}, y={self.y})'
 
 def run(width=640, height=480, *, resizable=False, title="drawy", background_color=Color.White):
-	background_color = Color._from_whatever(background_color)
+	global _drawer
 
-	DRAWER = '_DRAWY_DRAWER'
-	if DRAWER in globals():
-		drawer, props = globals()[DRAWER]
+	PROPS = '_DRAWER_PROPS'
+	background_color = Color._from_whatever(background_color)
+	if _drawer is not None:
+		props = globals()[PROPS]
 		if width != props['width'] or height != props['height']:
 			props['width'], props['height'] = width, height
-			drawer.change_size(width, height)
+			_drawer.change_size(width, height)
 		if title != props['title']:
 			props['title'] = title
-			drawer.change_title(title)
+			_drawer.change_title(title)
 		if background_color != props['background_color']:
 			props['background_color'] = background_color
-			drawer.change_background_color(background_color)
-		return
-
-	from .drawer import Drawer
-	main_module = sys.modules['__main__']
-	this_module = sys.modules[__name__]
-	drawer = Drawer(main_module, this_module)
-	globals()[DRAWER] = drawer, {'width': width, 'height': height, 'title': title, 'background_color': background_color}
-
-	drawer.run(width, height, resizable, title, background_color)
+			_drawer.change_background_color(background_color)
+	else:
+		globals()[PROPS] = {'width': width, 'height': height, 'title': title, 'background_color': background_color}
+		main_module = sys.modules['__main__']
+		this_module = sys.modules[__name__]
+		_drawer = Drawer(main_module, this_module)
+		_drawer.run(width, height, resizable, title, background_color)

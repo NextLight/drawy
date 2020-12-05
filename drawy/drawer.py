@@ -18,8 +18,10 @@ class Drawer:
 
 	def init_glfw(self):
 		glfw.init()
-		self.KEY_NAMES = {}
-		self.MOUSE_NAMES = {}
+		self.key_code_to_name = {}
+		self.key_name_to_code = {}
+		self.mouse_code_to_name = {}
+		self.mouse_name_to_code = {}
 		for n, v in vars(glfw).items():
 			if n.startswith('KEY_'):
 				if v == glfw.KEY_SPACE:
@@ -30,9 +32,13 @@ class Drawer:
 					name = n[4:]
 				if name.startswith('KP_'):
 					name = name[3:]
-				self.KEY_NAMES[v] = name.lower()
+				name = name.lower()
+				self.key_code_to_name[v] = name
+				self.key_name_to_code[name] = v
 			elif n.startswith('MOUSE_BUTTON_'):
-				self.MOUSE_NAMES[v] = n[13:].lower()
+				name = n[13:].lower()
+				self.mouse_code_to_name[v] = name
+				self.mouse_name_to_code[name] = v
 
 	def run(self, width, height, resizable, title, background_color):
 		self.init_glfw()
@@ -88,12 +94,12 @@ class Drawer:
 		self.background_color = background_color
 
 	def key_callback(self, window, key, scancode, action, mods):
-		name = self.KEY_NAMES[key]
-		if action in (glfw.PRESS, glfw.REPEAT):
+		name = self.key_code_to_name[key]
+		if action == glfw.PRESS:
 			self.call_from_main('on_key', [name])
 
 	def mouse_button_callback(self, window, button, action, mods):
-		name = self.MOUSE_NAMES[button]
+		name = self.mouse_code_to_name[button]
 		if action == glfw.PRESS:
 			self.call_from_main('on_click', [name])
 
@@ -104,6 +110,12 @@ class Drawer:
 
 	def monitor_callback(self, *args):
 		self.drawy_module.REFRESH_RATE = glfw.get_video_mode(glfw.get_primary_monitor()).refresh_rate
+
+	def is_key_pressed(self, key):
+		return glfw.get_key(self.window, self.key_name_to_code[key]) == glfw.PRESS
+	
+	def is_mouse_pressed(self, button):
+		return glfw.get_mouse_button(self.window, self.mouse_name_to_code[button])
 
 	def draw_frame(self):
 		try:

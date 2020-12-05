@@ -5,7 +5,7 @@ import random
 PADDLE_HEIGHT = 150
 PADDLE_WIDTH = 20
 BALL_SIZE = 15
-INITIAL_SPEED = 3
+INITIAL_SPEED = 500 / REFRESH_RATE
 SPEED_INCREMENT = 0.1
 FOREGROUND = 'white'
 
@@ -28,6 +28,19 @@ def reset_ball():
     g.speed = INITIAL_SPEED
 
 def update():
+    movement = INITIAL_SPEED
+    if is_key_pressed('7'):
+        g.paddles[0].y -= movement
+    elif is_key_pressed('4'):
+        g.paddles[0].y += movement
+    elif is_key_pressed('9'):
+        g.paddles[1].y -= movement
+    elif is_key_pressed('6'):
+        g.paddles[1].y += movement
+
+    for p in g.paddles:
+        p.y %= HEIGHT
+
     g.ball += g.dir * g.speed
     
     if g.ball.y - BALL_SIZE <= 0 or g.ball.y + BALL_SIZE >= HEIGHT:
@@ -64,20 +77,6 @@ def draw():
         draw_rectangle(p - Point(PADDLE_WIDTH, PADDLE_HEIGHT) / 2, PADDLE_WIDTH, PADDLE_HEIGHT, FOREGROUND)
     
     draw_circle(g.ball, PADDLE_WIDTH, FOREGROUND)
-
-def on_key(key):
-    MOVEMENT = PADDLE_HEIGHT / 10
-    if key == '7':
-        g.paddles[0].y -= MOVEMENT
-    elif key == '4':
-        g.paddles[0].y += MOVEMENT
-    elif key == '9':
-        g.paddles[1].y -= MOVEMENT
-    elif key == '6':
-        g.paddles[1].y += MOVEMENT
-
-    for p in g.paddles:
-        p.y %= HEIGHT
 
 
 run(width=900, height=500, title="Pong", background_color='black')
