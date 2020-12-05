@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="drawy",
-    version="1.0",
+    version="1.0.1",
     author="Samuele Turci",
     description="Easily create interactive graphical applications",
     long_description=open("README.md").read(),
@@ -10,7 +10,7 @@ setuptools.setup(
     url="https://github.com/NextLight/drawy",
     packages=setuptools.find_packages(),
     install_requires=[
-        "skia-python==86.1",
+        "skia-python==87.0",
         "glfw==2.0.0",
     ],
     classifiers=[
