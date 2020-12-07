@@ -19,7 +19,7 @@ class Drawer:
 	def init_glfw(self):
 		glfw.init()
 		self.key_code_to_name = {}
-		self.key_name_to_code = {}
+		self.key_name_to_codes = {}
 		self.mouse_code_to_name = {}
 		self.mouse_name_to_code = {}
 		for n, v in vars(glfw).items():
@@ -34,7 +34,9 @@ class Drawer:
 					name = name[3:]
 				name = name.lower()
 				self.key_code_to_name[v] = name
-				self.key_name_to_code[name] = v
+				if not name in self.key_name_to_codes:
+					self.key_name_to_codes[name] = []
+				self.key_name_to_codes[name].append(v)
 			elif n.startswith('MOUSE_BUTTON_'):
 				name = n[13:].lower()
 				self.mouse_code_to_name[v] = name
@@ -112,7 +114,7 @@ class Drawer:
 		self.drawy_module.REFRESH_RATE = glfw.get_video_mode(glfw.get_primary_monitor()).refresh_rate
 
 	def is_key_pressed(self, key):
-		return glfw.get_key(self.window, self.key_name_to_code[key]) == glfw.PRESS
+		return any(glfw.get_key(self.window, k) == glfw.PRESS for k in self.key_name_to_codes[key])
 	
 	def is_mouse_pressed(self, button):
 		return glfw.get_mouse_button(self.window, self.mouse_name_to_code[button])

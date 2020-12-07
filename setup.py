@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="drawy",
-    version="1.0.1",
+    version="1.0.2",
     author="Samuele Turci",
     description="Easily create interactive graphical applications",
     long_description=open("README.md").read(),

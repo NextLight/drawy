@@ -29,13 +29,13 @@ def reset_ball():
 
 def update():
     movement = INITIAL_SPEED
-    if is_key_pressed('7'):
+    if is_key_pressed('7') or is_key_pressed('q'):
         g.paddles[0].y -= movement
-    elif is_key_pressed('4'):
+    elif is_key_pressed('4') or is_key_pressed('a'):
         g.paddles[0].y += movement
-    elif is_key_pressed('9'):
+    elif is_key_pressed('9') or is_key_pressed('o'):
         g.paddles[1].y -= movement
-    elif is_key_pressed('6'):
+    elif is_key_pressed('6') or is_key_pressed('l'):
         g.paddles[1].y += movement
 
     for p in g.paddles:
